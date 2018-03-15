@@ -9,7 +9,7 @@ class MineApp:
         _.max_delta = datetime.timedelta(0,60)
         _.set_difficulty(-1)
         _.previous = 'PREV'
-        _.blkno = -1
+        _.blkno = 1
     def destroy_chain(_):
         print(">> destroy")
         try:   shutil.rmtree("c")
@@ -24,9 +24,14 @@ class MineApp:
         _.LEN = int(_.difficulty / 4)
         _.CH  = V[_.difficulty % 4]
         _.STR = '0'*_.LEN
-        pass
+    def read_blockno(_):
+        line = open('c/o').readline().split()
+        if line[0] == 'BlockNo:':
+            _.blkno = int(line)
     def link_block(_):
-        pass
+        try:    _.read_blockno()
+        except: pass
+        _.blkno += 1
     def mk_hash(_, n, sig):
         h = hashlib.new('ripemd160')
         h.update(("%x\n%s" % (n, sig)).encode())
@@ -34,7 +39,6 @@ class MineApp:
     def _solve_block(_, sig, n = 0):
         while 1:
             n += 1
-            h = hashlib.new('ripemd160')
             hd = _.mk_hash(n, sig)
             if hd.startswith(_.STR):
                 if hd[_.LEN] in _.CH:
@@ -45,15 +49,17 @@ class MineApp:
         os.system("cat c/n/* 2>/dev/null|" +
                   "openssl ripemd160 >c/p/sig")
         os.system("cat -vet c/n/* 2>/dev/null|cat -n")
+        os.system("cp c/d c/o")
         os.system("cat c/n/* >c/d 2>/dev/null")
         os.system("rm -fr c/n/*")
     def solve_block(_):
         n, hd = _._solve_block(open("c/p/sig").read())
         os.system("echo %x >c/p/none" % n)
         os.system("cat c/p/*|openssl ripemd160 >c/id")
-        pass
     def update_headers(_):
-        diff = _.update_ts()
+        _.prev_ts = _.ts
+        _.ts = datetime.datetime.now()
+        diff = _.ts - _.prev_ts
         if   diff < _.min_delta:  _.set_difficulty(+1)
         elif diff > _.max_delta:  _.set_difficulty(-1)
         with open('c/n/BlockNo','w') as f:
@@ -67,28 +73,14 @@ class MineApp:
         with open('c/n/_','w') as f:
             f.write('\n')
         return
-    @property
-    def too_many(_):
-        return 0
-    @property
-    def not_enough(_):
-        return 0
-    @property
-    def timestamp(_):
-        return datetime.datetime.now().isoformat()
-    def update_ts(_):
-        _.prev_ts = _.ts
-        _.ts = datetime.datetime.now()
-        return _.ts - _.prev_ts
     def mine_block(_):
         _.sign_block()
         _.solve_block()
-        _.link_block()
         _.update_headers()
+        _.link_block()
         return
     def loop(_, reset = False):
         if reset: _.destroy_chain() ; _.create_chain()
-        while 1:
-            _.mine_block()
+        while 1:  _.mine_block()
 def main(): MineApp().loop(reset=True)
 if __name__ == '__main__': main()
