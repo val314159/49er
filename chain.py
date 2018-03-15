@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os, sys, time, datetime, hashlib, shutil
-V = ['0123456789abcdef','01234567','0123','01']
 class MineApp:
+    V = ['0123456789abcdef','01234567','0123','01']
     def __init__(_):
         _.difficulty = 16
         _.ts = datetime.datetime.now()
@@ -21,9 +21,8 @@ class MineApp:
             f.write("Let there be blocks!\n")
     def set_difficulty(_, adjustment):
         _.difficulty += adjustment
-        _.LEN = int(_.difficulty / 4)
-        _.CH  = V[_.difficulty % 4]
-        _.STR = '0'*_.LEN
+        q, r = divmod(_.difficulty, 4)
+        _.pfx, _.off, _.ch = '0'*q, q, _.V[r]
     def read_blockno(_):
         line = open('c/o').readline().split()
         if line[0] == 'BlockNo:':
@@ -40,8 +39,8 @@ class MineApp:
         while 1:
             n += 1
             hd = _.mk_hash(n, sig)
-            if hd.startswith(_.STR):
-                if hd[_.LEN] in _.CH:
+            if hd.startswith(_.pfx):
+                if hd[_.off] in _.ch:
                     print(">> Solved: %s+%x" % (hd, n))
                     return n, hd
     def sign_block(_):
@@ -49,7 +48,7 @@ class MineApp:
         os.system("cat c/n/* 2>/dev/null|" +
                   "openssl ripemd160 >c/p/sig")
         os.system("cat -vet c/n/* 2>/dev/null|cat -n")
-        os.system("cp c/d c/o")
+        os.system("cp c/d c/o 2>/dev/null")
         os.system("cat c/n/* >c/d 2>/dev/null")
         os.system("rm -fr c/n/*")
     def solve_block(_):
