@@ -2,7 +2,9 @@
 import os, sys, time, datetime, hashlib, shutil
 class MineApp:
     V = ['0123456789abcdef','01234567','0123','01']
+    SEP = '~~:'
     def __init__(_):
+        _.verbose = 1
         _.difficulty = 16
         _.ts = datetime.datetime.now()
         _.min_delta = datetime.timedelta(0,4)
@@ -11,14 +13,18 @@ class MineApp:
         _.previous = 'PREV'
         _.blkno = 1
     def destroy_chain(_):
-        print(">> destroy")
+        print("## destroy")
         try:   shutil.rmtree("c")
         except:  pass
     def create_chain(_):
-        print(">> create")
-        [os.mkdir(x) for x in ('c','c/n','c/t','c/p')]
-        with open('c/n/genesis.yaml','w') as f:
-            f.write("Let there be blocks!\n")
+        print("## create")
+        [os.mkdir('c/'+x) for x in '/ntpi']
+        msg = "Let there be blocks!\n"
+        msg = ""
+        with open('c/n/_','w') as f:
+            f.write(_.SEP+'\n')
+        #with open('c/n/genesis.yaml','w') as f:
+        #    f.write(msg + "\n")
     def set_difficulty(_, adjustment):
         _.difficulty += adjustment
         q, r = divmod(_.difficulty, 4)
@@ -45,8 +51,9 @@ class MineApp:
                     _.full_id = "$!FullId: " + _.previous
                     with open('c/p/f','w') as f:
                         f.write(_.full_id + '\n')
-                    os.system('cat c/p/f c/d')
-                    print('---')
+                    os.system('cat c/p/f c/d    >c/i/' + _.previous)
+                    if _.verbose:
+                        os.system('echo ---|cat c/i/%s -' % _.previous)
                     return n, hd
     def sign_block(_):
         os.system("rm -f c/p/*")
@@ -56,7 +63,7 @@ class MineApp:
         os.system("rm -f c/n/*")
     def solve_block(_):
         n, hd = _._solve_block(open("c/p/sig").read())
-        os.system("echo %x >c/p/none" % n)
+        os.system("echo %x >c/p/nonce" % n)
         os.system("cat c/p/*|openssl ripemd160 >c/id")
     def update_headers(_):
         _.prev_ts = _.ts
@@ -73,7 +80,7 @@ class MineApp:
         with open('c/n/Previous','w') as f:
             f.write('Previous: %s\n' % _.previous)
         with open('c/n/_','w') as f:
-            f.write('\n')
+            f.write(_.SEP+'\n')
         return
     def mine_block(_):
         _.sign_block()
