@@ -19,12 +19,10 @@ class MineApp:
     def create_chain(_):
         print("## create")
         [os.mkdir('c/'+x) for x in '/ntpi']
-        msg = "Let there be blocks!\n"
-        msg = ""
         with open('c/n/_','w') as f:
             f.write(_.SEP+'\n')
-        #with open('c/n/genesis.yaml','w') as f:
-        #    f.write(msg + "\n")
+        with open('c/n/genesis.yaml','w') as f:
+            f.write("- Let there be blocks!\n")
     def set_difficulty(_, adjustment):
         _.difficulty += adjustment
         q, r = divmod(_.difficulty, 4)
