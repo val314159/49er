@@ -41,16 +41,19 @@ class MineApp:
             hd = _.mk_hash(n, sig)
             if hd.startswith(_.pfx):
                 if hd[_.off] in _.ch:
-                    print(">> Solved: %s+%x" % (hd, n))
+                    _.previous = "%s+%x" % (hd, n)
+                    _.full_id = "$!FullId: " + _.previous
+                    with open('c/p/f','w') as f:
+                        f.write(_.full_id + '\n')
+                    os.system('cat c/p/f c/d')
+                    print('---')
                     return n, hd
     def sign_block(_):
-        os.system("rm -fr c/p ; mkdir -p c/p")
-        os.system("cat c/n/* 2>/dev/null|" +
-                  "openssl ripemd160 >c/p/sig")
-        os.system("cat -vet c/n/* 2>/dev/null|cat -n")
-        os.system("cp c/d c/o 2>/dev/null")
-        os.system("cat c/n/* >c/d 2>/dev/null")
-        os.system("rm -fr c/n/*")
+        os.system("rm -f c/p/*")
+        os.system("cp    c/d    c/o 2>/dev/null")
+        os.system("cat   c/n/* >c/d 2>/dev/null ")
+        os.system("openssl ripemd160 <c/d >c/p/sig")
+        os.system("rm -f c/n/*")
     def solve_block(_):
         n, hd = _._solve_block(open("c/p/sig").read())
         os.system("echo %x >c/p/none" % n)
