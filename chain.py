@@ -47,6 +47,10 @@ class MineApp:
                     with open('c/p/f','w') as f:
                         f.write(_.full_id + '\n')
                     os.system('cat c/p/f c/d    >c/i/' + _.previous)
+                    bdir = 'c/b/%s' % _.blkno
+                    os.system('mkdir -p ' + bdir)
+                    os.system('cd %s ; ln ../../i/%s' % (bdir, _.previous))
+                    #os.system('cd cat c/p/f c/d    >c/i/' + _.previous)
                     if _.verbose:
                         os.system('echo ---|cat c/i/%s -' % _.previous)
                     return n, hd
