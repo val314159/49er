@@ -27,7 +27,7 @@ class MineApp:
     def read_blockno(_):
         line = open('c/o').readline().split()
         if line[0] == 'BlockNo:':
-            _.blkno = int(line)
+            _.blkno = int(line)+1
     def link_block(_):
         try:    _.read_blockno()
         except: pass
