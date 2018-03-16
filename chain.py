@@ -11,7 +11,7 @@ class MineApp:
         _.max_delta = datetime.timedelta(0,60)
         _.set_difficulty(-1)
         _.previous = 'PREV'
-        _.blkno = 1
+        _.blkno = 2
     def create_chain(_):
         print("## create")
         os.system("rm -fr c")
@@ -47,7 +47,7 @@ class MineApp:
                     with open('c/p/f','w') as f:
                         f.write(_.full_id + '\n')
                     os.system('cat c/p/f c/d    >c/i/' + _.previous)
-                    bdir = 'c/b/%s' % _.blkno
+                    bdir = 'c/b/%s' % (_.blkno-2)
                     os.system('mkdir -p ' + bdir)
                     os.system('cd %s ; ln ../../i/%s' % (bdir, _.previous))
                     #os.system('cd cat c/p/f c/d    >c/i/' + _.previous)
@@ -71,7 +71,7 @@ class MineApp:
         if   diff < _.min_delta:  _.set_difficulty(+1)
         elif diff > _.max_delta:  _.set_difficulty(-1)
         with open('c/n/BlockNo','w') as f:
-            f.write('BlockNo: %s\n' % _.blkno)
+            f.write('BlockNo: %s\n' % (_.blkno-1))
         with open('c/n/Date','w') as f:
             f.write('Date: %s\n' % _.ts.isoformat())
         with open('c/n/Difficulty','w') as f:
