@@ -12,13 +12,10 @@ class MineApp:
         _.set_difficulty(-1)
         _.previous = 'PREV'
         _.blkno = 1
-    def destroy_chain(_):
-        print("## destroy")
-        try:   shutil.rmtree("c")
-        except:  pass
     def create_chain(_):
         print("## create")
-        [os.mkdir('c/'+x) for x in '/ntpi']
+        os.system("rm -fr c")
+        [os.mkdir('c/'+x) for x in '/ntpib']
         with open('c/n/_','w') as f:
             f.write(_.SEP+'\n')
         with open('c/n/genesis.yaml','w') as f:
@@ -87,7 +84,7 @@ class MineApp:
         _.link_block()
         return
     def loop(_, reset = False):
-        if reset: _.destroy_chain() ; _.create_chain()
+        if reset: _.create_chain()
         while 1:  _.mine_block()
 def main(): MineApp().loop(reset=True)
 if __name__ == '__main__': main()
